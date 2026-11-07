@@ -19,6 +19,7 @@ class Course(models.Model):
 
 class Lesson(models.Model):
     """Описывает модель урок"""
+
     name = models.CharField(max_length=150, verbose_name="Урок", unique=True, help_text="Название урока")
     description = models.TextField(null=True, blank=True, verbose_name="Описание урока", help_text="Описание урока")
     course = models.ForeignKey(
@@ -31,6 +32,8 @@ class Lesson(models.Model):
         verbose_name="Превью курса",
         help_text="Загрузите изображение (необязательно)",
     )
-    link = models.CharField(max_length=200, verbose_name="Ссылка на урок", null=True, blank=True, help_text="Ссылка на урок")
+    link = models.CharField(
+        max_length=200, verbose_name="Ссылка на урок", null=True, blank=True, help_text="Ссылка на урок"
+    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата последнего изменения")

@@ -1,12 +1,20 @@
-from materials.apps import MaterialsConfig
-from rest_framework.routers import SimpleRouter
 from django.urls import path
+from rest_framework.routers import SimpleRouter
 
-from materials.views import CourseViewSet, LessonCreateApiView, LessonListApiView, LessonUpdateApiView, LessonRetrieveApiView, LessonDestroyApiView
+from materials.apps import MaterialsConfig
+from materials.views import (
+    CourseViewSet,
+    LessonCreateApiView,
+    LessonDestroyApiView,
+    LessonListApiView,
+    LessonRetrieveApiView,
+    LessonUpdateApiView,
+)
+
 app_name = MaterialsConfig.name
 
 router = SimpleRouter()
-router.register("", CourseViewSet)
+router.register("courses", CourseViewSet)
 
 urlpatterns = [
     path("lessons/", LessonListApiView.as_view(), name="lessons_list"),
