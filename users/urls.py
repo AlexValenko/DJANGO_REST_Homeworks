@@ -1,7 +1,7 @@
 from django.urls import path
 
 from users.apps import UsersConfig
-from users.views import UserDestroyApiView, UserListApiView, UserRetrieveApiView, UserUpdateApiView
+from users.views import PaymentList, UserDestroyApiView, UserListApiView, UserRetrieveApiView, UserUpdateApiView
 
 app_name = UsersConfig.name
 
@@ -12,4 +12,6 @@ urlpatterns = [
     path("<int:pk>/", UserRetrieveApiView.as_view(), name="users_retrieve"),
     path("<int:pk>/update/", UserUpdateApiView.as_view(), name="users_update"),
     path("<int:pk>/delete/", UserDestroyApiView.as_view(), name="users_delete"),
+    # payment
+    path("payments/", PaymentList.as_view(), name="payment_list"),
 ]

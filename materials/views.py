@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView
 
-from materials.serializer import CourseSerializer, LessonSerializer, CourseWithLessonsSerializer
+from materials.serializer import CourseSerializer, CourseWithLessonsSerializer, LessonSerializer
 
 from .models import Course, Lesson
 
