@@ -1,0 +1,242 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "email": "anna@example.com",
+      "first_name": "Анна",
+      "last_name": "Соколова",
+      "user_city": "Москва",
+      "date_joined": "2026-10-01T09:00:00Z",
+      "password": "!",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+      "email": "ivan@example.com",
+      "first_name": "Иван",
+      "last_name": "Орлов",
+      "user_city": "Казань",
+      "date_joined": "2026-10-01T09:00:00Z",
+      "password": "!",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 3,
+    "fields": {
+      "email": "maria@example.com",
+      "first_name": "Мария",
+      "last_name": "Кузнецова",
+      "user_city": "Самара",
+      "date_joined": "2026-10-01T09:00:00Z",
+      "password": "!",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 4,
+    "fields": {
+      "email": "pavel@example.com",
+      "first_name": "Павел",
+      "last_name": "Волков",
+      "user_city": "Пермь",
+      "date_joined": "2026-10-01T09:00:00Z",
+      "password": "!",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 5,
+    "fields": {
+      "email": "elena@example.com",
+      "first_name": "Елена",
+      "last_name": "Попова",
+      "user_city": "Томск",
+      "date_joined": "2026-10-01T09:00:00Z",
+      "password": "!",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  },
+  {
+    "model": "materials.course",
+    "pk": 1,
+    "fields": {
+      "name": "Основы Python",
+      "description": "Типы данных, функции и модули.",
+      "created_at": "2026-10-01T09:00:00Z",
+      "updated_at": "2026-10-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "materials.course",
+    "pk": 2,
+    "fields": {
+      "name": "Веб-разработка на Django",
+      "description": "Модели, представления и маршруты Django.",
+      "created_at": "2026-10-01T09:00:00Z",
+      "updated_at": "2026-10-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "materials.course",
+    "pk": 3,
+    "fields": {
+      "name": "Django REST Framework",
+      "description": "Создание API для веб-приложений.",
+      "created_at": "2026-10-01T09:00:00Z",
+      "updated_at": "2026-10-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "materials.course",
+    "pk": 4,
+    "fields": {
+      "name": "Основы SQL",
+      "description": "Запросы к реляционным базам данных.",
+      "created_at": "2026-10-01T09:00:00Z",
+      "updated_at": "2026-10-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "materials.course",
+    "pk": 5,
+    "fields": {
+      "name": "Тестирование API",
+      "description": "Проверка поведения API и кодов ответов.",
+      "created_at": "2026-10-01T09:00:00Z",
+      "updated_at": "2026-10-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 1,
+    "fields": {
+      "name": "Списки и словари",
+      "description": "Создаём коллекции и работаем с их элементами.",
+      "course": 1,
+      "created_at": "2026-10-01T09:00:00Z",
+      "updated_at": "2026-10-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 2,
+    "fields": {
+      "name": "Модели и миграции",
+      "description": "Описываем модель и применяем миграцию.",
+      "course": 2,
+      "created_at": "2026-10-01T09:00:00Z",
+      "updated_at": "2026-10-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 3,
+    "fields": {
+      "name": "Сериализаторы DRF",
+      "description": "Преобразуем данные модели в JSON и проверяем входные поля.",
+      "course": 3,
+      "created_at": "2026-10-01T09:00:00Z",
+      "updated_at": "2026-10-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 4,
+    "fields": {
+      "name": "Соединение таблиц",
+      "description": "Получаем связанные записи с помощью JOIN.",
+      "course": 4,
+      "created_at": "2026-10-01T09:00:00Z",
+      "updated_at": "2026-10-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 5,
+    "fields": {
+      "name": "Проверка CRUD",
+      "description": "Проверяем создание, чтение, обновление и удаление записей.",
+      "course": 5,
+      "created_at": "2026-10-01T09:00:00Z",
+      "updated_at": "2026-10-01T09:00:00Z"
+    }
+  },
+  {
+    "model": "users.payment",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "pay_date": "2026-11-01T12:00:00Z",
+      "course": 1,
+      "lesson": null,
+      "pay_sum": "3500.00",
+      "pay_method": "transaction"
+    }
+  },
+  {
+    "model": "users.payment",
+    "pk": 2,
+    "fields": {
+      "user": 2,
+      "pay_date": "2026-11-02T12:00:00Z",
+      "course": null,
+      "lesson": 2,
+      "pay_sum": "800.00",
+      "pay_method": "cash"
+    }
+  },
+  {
+    "model": "users.payment",
+    "pk": 3,
+    "fields": {
+      "user": 3,
+      "pay_date": "2026-11-03T12:00:00Z",
+      "course": 3,
+      "lesson": null,
+      "pay_sum": "4900.00",
+      "pay_method": "transaction"
+    }
+  },
+  {
+    "model": "users.payment",
+    "pk": 4,
+    "fields": {
+      "user": 4,
+      "pay_date": "2026-11-04T12:00:00Z",
+      "course": null,
+      "lesson": 4,
+      "pay_sum": "950.00",
+      "pay_method": "transaction"
+    }
+  },
+  {
+    "model": "users.payment",
+    "pk": 5,
+    "fields": {
+      "user": 5,
+      "pay_date": "2026-11-05T12:00:00Z",
+      "course": 5,
+      "lesson": null,
+      "pay_sum": "4200.00",
+      "pay_method": "cash"
+    }
+  }
+]
