@@ -3,6 +3,15 @@ from rest_framework import serializers
 from .models import Payment, User
 
 
+class UserRegisterSerializer(serializers.ModelSerializer):
+    """Сериализатор для регистрации пользователя. Здесь добавлены все поля потому что без поля password создание
+    пользователя не срабатывает корректно, но при получении списка пользователей не нужно отображать все пароли"""
+    class Meta:
+        model = User
+        fields = ("id", "email", "password")
+        extra_kwargs = {"password": {"write_only": True}}
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

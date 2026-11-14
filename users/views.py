@@ -2,11 +2,25 @@ from django.db.models.deletion import ProtectedError
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, CreateAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from .models import Payment, User
-from .serializer import PaymentSerializer, UserProfileSerializer, UserSerializer
+from .serializer import PaymentSerializer, UserProfileSerializer, UserSerializer, UserRegisterSerializer
+
+
+class UserCreateAPIView(CreateAPIView):
+    """Эндпоинт для создания пользователя"""
+    serializer_class = UserRegisterSerializer
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+
+    def perform_create(self, serializer):
+        """Переопределяет метод создания пользователя, чтобы избежать конфликта из-за username = None"""
+        user = serializer.save(is_active=True)
+        user.set_password(user.password)
+        user.save()
 
 
 class UserListApiView(ListAPIView):
