@@ -11,7 +11,9 @@ class CourseSerializer(ModelSerializer):
             "name",
             "preview",
             "description",
+            "owner",
         )
+        read_only_fields = ("owner",)
 
 
 class LessonSerializer(ModelSerializer):
@@ -24,17 +26,28 @@ class LessonSerializer(ModelSerializer):
             "course",
             "preview",
             "link",
+            "owner",
         )
+        read_only_fields = ("owner",)
 
 
 class CourseWithLessonsSerializer(ModelSerializer):
-    lessons_counts = SerializerMethodField()
-    lessons = LessonSerializer(many=True, read_only=True)
+    lessons_count = SerializerMethodField()
+    lessons = SerializerMethodField()
 
-    @staticmethod
-    def get_lessons_counts(course):
-        return course.lessons.count()
+    def get_visible_lessons(self, course):
+        user = self.context["request"].user
+        if user.groups.filter(name="moders").exists():
+            return course.lessons.all()
+        return course.lessons.filter(owner=user)
+
+    def get_lessons(self, course):
+        lessons = self.get_visible_lessons(course)
+        return LessonSerializer(lessons, many=True, context=self.context).data
+
+    def get_lessons_count(self, course):
+        return self.get_visible_lessons(course).count()
 
     class Meta:
         model = Course
-        fields = ("id", "name", "preview", "description", "lessons_counts", "lessons")
+        fields = ("id", "name", "preview", "description", "lessons_count", "lessons")
