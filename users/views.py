@@ -2,11 +2,14 @@ from django.db.models.deletion import ProtectedError
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, \
+    get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .models import Payment, User
+from materials.models import Course
+from .models import Payment, User, Subscription
 from .permission import IsOwner, IsOwnProfile
 from .serializer import PaymentSerializer, UserProfileSerializer, UserRegisterSerializer, UserSerializer
 
@@ -93,3 +96,28 @@ class PaymentList(ListAPIView):
 
     def get_queryset(self):
         return Payment.objects.filter(user=self.request.user)
+
+
+class SubscriptionAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        # получаем пользователя из self.requests
+        user = self.request.user
+        # получаем id курса из self.reqests.data
+        course_id = self.request.data.get("course")
+        # получаем объект курса из базы
+        course = get_object_or_404(Course, pk=course_id)
+        # получаем объекты подписок по текущему пользователю и курса
+        subscriptions = Subscription.objects.filter(user=user, course=course)
+
+        # Если подписка у пользователя на этот курс есть - удаляем ее
+        if subscriptions.exists():
+            subscriptions.delete()
+            message = 'подписка удалена'
+        # Если подписки у пользователя на этот курс нет - создаем ее
+        else:
+            Subscription.objects.create(user=user, course=course)
+            message = 'подписка добавлена'
+        # Возвращаем ответ в API
+        return Response({"message": message})

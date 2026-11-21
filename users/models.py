@@ -58,3 +58,19 @@ class Payment(models.Model):
     pay_method = models.CharField(
         max_length=12, verbose_name="Метод оплаты", help_text="Выберите метод оплаты", choices=PAY_METHOD_CHOICES
     )
+
+
+class Subscription(models.Model):
+    """Класс, описывающий наличие подписки у пользователя на курс"""
+    user = models.ForeignKey(to=User, related_name="subscription", on_delete=models.CASCADE, verbose_name="Пользователь")
+    course = models.ForeignKey(to=Course, related_name="subscription", on_delete=models.CASCADE, verbose_name="Курс")
+
+    class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "course"],
+                name="unique_subscription_user_course",
+            ),
+        ]

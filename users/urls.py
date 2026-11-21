@@ -9,7 +9,7 @@ from users.views import (
     UserDestroyApiView,
     UserListApiView,
     UserRetrieveApiView,
-    UserUpdateApiView,
+    UserUpdateApiView, SubscriptionAPIView,
 )
 
 app_name = UsersConfig.name
@@ -27,4 +27,6 @@ urlpatterns = [
     path("register/", UserCreateAPIView.as_view(), name="register"),
     path("login/", TokenObtainPairView.as_view(permission_classes=(AllowAny,)), name="login"),
     path("token/refresh/", TokenRefreshView.as_view(permission_classes=(AllowAny,)), name="token_refresh"),
+    # Создание/отклонение подписки пользователя на курс
+    path("subscriptions/", SubscriptionAPIView.as_view(), name = "subscriptions")
 ]
