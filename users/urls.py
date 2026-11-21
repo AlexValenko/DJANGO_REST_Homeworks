@@ -5,11 +5,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from users.apps import UsersConfig
 from users.views import (
     PaymentList,
+    SubscriptionAPIView,
     UserCreateAPIView,
     UserDestroyApiView,
     UserListApiView,
     UserRetrieveApiView,
-    UserUpdateApiView, SubscriptionAPIView,
+    UserUpdateApiView,
 )
 
 app_name = UsersConfig.name
@@ -28,5 +29,5 @@ urlpatterns = [
     path("login/", TokenObtainPairView.as_view(permission_classes=(AllowAny,)), name="login"),
     path("token/refresh/", TokenRefreshView.as_view(permission_classes=(AllowAny,)), name="token_refresh"),
     # Создание/отклонение подписки пользователя на курс
-    path("subscriptions/", SubscriptionAPIView.as_view(), name = "subscriptions")
+    path("subscriptions/", SubscriptionAPIView.as_view(), name="subscriptions"),
 ]

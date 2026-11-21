@@ -20,6 +20,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
 class LessonSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения уроков"""
+
     link = serializers.CharField(validators=[you_tube_only])
 
     class Meta:
@@ -34,7 +35,6 @@ class LessonSerializer(serializers.ModelSerializer):
             "owner",
         )
         read_only_fields = ("owner",)
-
 
 
 class CourseWithLessonsSerializer(serializers.ModelSerializer):

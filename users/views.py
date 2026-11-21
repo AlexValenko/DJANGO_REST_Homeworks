@@ -2,15 +2,22 @@ from django.db.models.deletion import ProtectedError
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, \
-    get_object_or_404
+from rest_framework.generics import (
+    CreateAPIView,
+    DestroyAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    UpdateAPIView,
+    get_object_or_404,
+)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from materials.models import Course
-from .models import Payment, User, Subscription
-from .permission import IsOwner, IsOwnProfile
+
+from .models import Payment, Subscription, User
+from .permission import IsOwnProfile
 from .serializer import PaymentSerializer, UserProfileSerializer, UserRegisterSerializer, UserSerializer
 
 
@@ -114,10 +121,10 @@ class SubscriptionAPIView(APIView):
         # Если подписка у пользователя на этот курс есть - удаляем ее
         if subscriptions.exists():
             subscriptions.delete()
-            message = 'подписка удалена'
+            message = "подписка удалена"
         # Если подписки у пользователя на этот курс нет - создаем ее
         else:
             Subscription.objects.create(user=user, course=course)
-            message = 'подписка добавлена'
+            message = "подписка добавлена"
         # Возвращаем ответ в API
         return Response({"message": message})

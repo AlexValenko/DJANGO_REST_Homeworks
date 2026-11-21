@@ -62,7 +62,10 @@ class Payment(models.Model):
 
 class Subscription(models.Model):
     """Класс, описывающий наличие подписки у пользователя на курс"""
-    user = models.ForeignKey(to=User, related_name="subscription", on_delete=models.CASCADE, verbose_name="Пользователь")
+
+    user = models.ForeignKey(
+        to=User, related_name="subscription", on_delete=models.CASCADE, verbose_name="Пользователь"
+    )
     course = models.ForeignKey(to=Course, related_name="subscription", on_delete=models.CASCADE, verbose_name="Курс")
 
     class Meta:
