@@ -6,12 +6,14 @@ from materials.serializer import CourseSerializer, CourseWithLessonsSerializer, 
 from users.permission import IsModer, IsOwner
 
 from .models import Course, Lesson
+from .paginators import LessonPagination
 
 
 class CourseViewSet(viewsets.ModelViewSet):
 
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    pagination_class = LessonPagination
 
     def get_queryset(self):
         if self.request.user.groups.filter(name="moders").exists():
@@ -66,6 +68,7 @@ class LessonListApiView(ListAPIView):
 
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    pagination_class = LessonPagination
 
     def get_queryset(self):
         if self.request.user.groups.filter(name="moders").exists():
