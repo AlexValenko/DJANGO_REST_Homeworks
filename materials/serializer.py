@@ -1,9 +1,11 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework import serializers
 
 from materials.models import Course, Lesson
+from materials.validators import you_tube_only
+from users.models import Subscription
 
 
-class CourseSerializer(ModelSerializer):
+class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = (
@@ -16,7 +18,11 @@ class CourseSerializer(ModelSerializer):
         read_only_fields = ("owner",)
 
 
-class LessonSerializer(ModelSerializer):
+class LessonSerializer(serializers.ModelSerializer):
+    """Сериализатор для отображения уроков"""
+
+    link = serializers.CharField(validators=[you_tube_only])
+
     class Meta:
         model = Lesson
         fields = (
@@ -31,9 +37,14 @@ class LessonSerializer(ModelSerializer):
         read_only_fields = ("owner",)
 
 
-class CourseWithLessonsSerializer(ModelSerializer):
-    lessons_count = SerializerMethodField()
-    lessons = SerializerMethodField()
+class CourseWithLessonsSerializer(serializers.ModelSerializer):
+    lessons_count = serializers.SerializerMethodField()
+    lessons = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField()
+
+    def get_is_subscribed(self, course):
+        user = self.context["request"].user
+        return Subscription.objects.filter(user=user, course=course).exists()
 
     def get_visible_lessons(self, course):
         user = self.context["request"].user
@@ -50,4 +61,4 @@ class CourseWithLessonsSerializer(ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ("id", "name", "preview", "description", "lessons_count", "lessons")
+        fields = ("id", "name", "preview", "description", "is_subscribed", "lessons_count", "lessons")
