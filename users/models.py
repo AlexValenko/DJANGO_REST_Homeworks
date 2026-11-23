@@ -72,6 +72,13 @@ class Payment(models.Model):
     pay_link = models.URLField(
         max_length=2048, blank=True, null=True, verbose_name="Ссылка на оплату", help_text="Укажите ссылку на оплату"
     )
+    pay_status = models.CharField(
+        max_length=20,
+        verbose_name="Статус оплаты",
+        help_text="Выберите статус оплаты",
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         verbose_name = "Оплата"

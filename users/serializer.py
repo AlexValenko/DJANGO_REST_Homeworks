@@ -49,15 +49,18 @@ class PaymentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Payment
-        fields = ("id", "user", "pay_date", "course", "lesson", "pay_sum", "pay_method")
+        fields = ("id", "user", "pay_date", "course", "lesson", "pay_sum", "pay_method", "pay_status")
+        read_only_fields = ("pay_status",)
+
 
 class PaymentCreateSerializer(serializers.ModelSerializer):
     course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
 
     class Meta:
         model = Payment
-        fields = ("id", "course", "pay_sum", "pay_link")
-        read_only_fields = ("id", "pay_sum", "pay_link")
+        fields = ("id", "course", "pay_sum", "pay_link", "pay_status")
+        read_only_fields = ("id", "pay_sum", "pay_link", "pay_status")
+
 
 class UserProfileSerializer(UserSerializer):
     payments = PaymentSerializer(many=True, read_only=True)

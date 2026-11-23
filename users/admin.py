@@ -9,7 +9,7 @@ class StudentAdmin(admin.ModelAdmin):
 
 
 @admin.register(Lesson)
-class StudentAdmin(admin.ModelAdmin):
+class LessonAdmin(admin.ModelAdmin):
     list_display = ("name", "description", "course", "preview", "created_at", "link", "updated_at")
 
 

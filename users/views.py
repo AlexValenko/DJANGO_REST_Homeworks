@@ -1,16 +1,13 @@
 from django.db.models.deletion import ProtectedError
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import (
-    CreateAPIView,
-    DestroyAPIView,
-    ListAPIView,
-    RetrieveAPIView,
-    UpdateAPIView,
-    get_object_or_404,
-)
+from rest_framework.generics import (CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView,
+                                     get_object_or_404)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -19,9 +16,9 @@ from materials.models import Course
 
 from .models import Payment, Subscription, User
 from .permission import IsOwnProfile
-from .serializer import PaymentSerializer, UserProfileSerializer, UserRegisterSerializer, UserSerializer, \
-    PaymentCreateSerializer
-from .services import create_stripe_price, create_stripe_sessions
+from .serializer import (PaymentCreateSerializer, PaymentSerializer, UserProfileSerializer, UserRegisterSerializer,
+                         UserSerializer)
+from .services import create_stripe_price, create_stripe_sessions, get_payment_status
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -52,6 +49,8 @@ class UserRetrieveApiView(RetrieveAPIView):
     serializer_class = UserSerializer
 
     def get_serializer_class(self):
+        if getattr(self, "swagger_fake_view", False):
+            return UserSerializer
         if self.request.user == self.get_object():
             return UserProfileSerializer
         return UserSerializer
@@ -111,6 +110,19 @@ class PaymentList(ListAPIView):
 class SubscriptionAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=["course"],
+            properties={"course": openapi.Schema(type=openapi.TYPE_INTEGER)},
+        ),
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={"message": openapi.Schema(type=openapi.TYPE_STRING)},
+            ),
+        },
+    )
     def post(self, request, *args, **kwargs):
         # получаем пользователя из self.requests
         user = self.request.user
@@ -135,6 +147,7 @@ class SubscriptionAPIView(APIView):
 
 class PaymentCreateAPIView(CreateAPIView):
     """Создание оплаты"""
+
     serializer_class = PaymentCreateSerializer
     queryset = Payment.objects.all()
 
@@ -144,7 +157,7 @@ class PaymentCreateAPIView(CreateAPIView):
         if amount is None or amount <= 0:
             raise ValidationError({"course": "У курса должна быть задана положительная цена."})
 
-        price = create_stripe_price(amount)
+        price = create_stripe_price(amount, course.name)
         session_id, payment_link = create_stripe_sessions(price)
 
         serializer.save(
@@ -155,3 +168,42 @@ class PaymentCreateAPIView(CreateAPIView):
             pay_link=payment_link,
         )
 
+
+class PaymentRetrieveAPIView(APIView):
+    """Класс для отображения статуса оплаты. Если тип оплаты - stripe - запрашивает статус платежа по номеру сессии,
+    в stripe через сервисную функцию get_payment_status, сохраняет значение в БД, если paid, то сохраняет дату оплаты
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "payment_status": openapi.Schema(type=openapi.TYPE_STRING),
+                },
+            ),
+            404: "Платёж не найден",
+        },
+    )
+    def get(self, request, pk):
+        payment = get_object_or_404(
+            Payment,
+            pk=pk,
+            user=request.user,
+            pay_method="stripe",
+        )
+        if not payment.session_id:
+            raise ValidationError({"detail": "У платежа нет сессии Stripe."})
+
+        payment_status = get_payment_status(payment.session_id)
+        payment.pay_status = payment_status
+        fields_to_update = ["pay_status"]
+
+        if payment_status == "paid" and payment.pay_date is None:
+            payment.pay_date = timezone.now()
+            fields_to_update.append("pay_date")
+
+        payment.save(update_fields=fields_to_update)
+        return Response({"payment_status": payment_status})
