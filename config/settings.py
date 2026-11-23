@@ -8,6 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(override=True)
 SECRET_KEY = os.getenv("SECRET_KEY")
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 
 DEBUG = True if os.getenv("DEBUG") == "True" else False
 

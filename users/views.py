@@ -1,6 +1,7 @@
 from django.db.models.deletion import ProtectedError
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import (
     CreateAPIView,
@@ -18,7 +19,9 @@ from materials.models import Course
 
 from .models import Payment, Subscription, User
 from .permission import IsOwnProfile
-from .serializer import PaymentSerializer, UserProfileSerializer, UserRegisterSerializer, UserSerializer
+from .serializer import PaymentSerializer, UserProfileSerializer, UserRegisterSerializer, UserSerializer, \
+    PaymentCreateSerializer
+from .services import create_stripe_price, create_stripe_sessions
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -128,3 +131,27 @@ class SubscriptionAPIView(APIView):
             message = "подписка добавлена"
         # Возвращаем ответ в API
         return Response({"message": message})
+
+
+class PaymentCreateAPIView(CreateAPIView):
+    """Создание оплаты"""
+    serializer_class = PaymentCreateSerializer
+    queryset = Payment.objects.all()
+
+    def perform_create(self, serializer):
+        course = serializer.validated_data["course"]
+        amount = course.price
+        if amount is None or amount <= 0:
+            raise ValidationError({"course": "У курса должна быть задана положительная цена."})
+
+        price = create_stripe_price(amount)
+        session_id, payment_link = create_stripe_sessions(price)
+
+        serializer.save(
+            user=self.request.user,
+            pay_sum=amount,
+            pay_method="stripe",
+            session_id=session_id,
+            pay_link=payment_link,
+        )
+

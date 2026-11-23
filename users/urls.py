@@ -10,7 +10,7 @@ from users.views import (
     UserDestroyApiView,
     UserListApiView,
     UserRetrieveApiView,
-    UserUpdateApiView,
+    UserUpdateApiView, PaymentCreateAPIView,
 )
 
 app_name = UsersConfig.name
@@ -24,10 +24,13 @@ urlpatterns = [
     path("<int:pk>/delete/", UserDestroyApiView.as_view(), name="users_delete"),
     # payment
     path("payments/", PaymentList.as_view(), name="payment_list"),
+    # Оплата выбранного курса
+    path("payments/pay_course/", PaymentCreateAPIView.as_view(), name="pay_course"),
     # регистрация пользователей и авторизация JWT
     path("register/", UserCreateAPIView.as_view(), name="register"),
     path("login/", TokenObtainPairView.as_view(permission_classes=(AllowAny,)), name="login"),
     path("token/refresh/", TokenRefreshView.as_view(permission_classes=(AllowAny,)), name="token_refresh"),
     # Создание/отклонение подписки пользователя на курс
     path("subscriptions/", SubscriptionAPIView.as_view(), name="subscriptions"),
+    # Оплата выбранного курса
 ]

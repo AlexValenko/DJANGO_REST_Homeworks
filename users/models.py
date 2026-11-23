@@ -1,4 +1,7 @@
+from decimal import Decimal
+
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import CharField
 from phonenumber_field.modelfields import PhoneNumberField
@@ -42,6 +45,7 @@ class Payment(models.Model):
     PAY_METHOD_CHOICES = [
         ("cash", "Наличные"),
         ("transaction", "Перевод на счет"),
+        ("stripe", "Онлайн оплата через Stripe"),
     ]
 
     user = models.ForeignKey(to=User, related_name="payments", on_delete=models.PROTECT, verbose_name="Пользователь")
@@ -53,11 +57,28 @@ class Payment(models.Model):
         to=Lesson, related_name="payments", on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Урок"
     )
     pay_sum = models.DecimalField(
-        max_digits=10, decimal_places=2, verbose_name="Сумма оплаты", help_text="Введите сумму оплаты"
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Сумма оплаты",
+        help_text="Введите сумму оплаты",
+        validators=[MinValueValidator(Decimal("0.01"))],
     )
     pay_method = models.CharField(
         max_length=12, verbose_name="Метод оплаты", help_text="Выберите метод оплаты", choices=PAY_METHOD_CHOICES
     )
+    session_id = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="ID сессии", help_text="Укажите ID сессии"
+    )
+    pay_link = models.URLField(
+        max_length=2048, blank=True, null=True, verbose_name="Ссылка на оплату", help_text="Укажите ссылку на оплату"
+    )
+
+    class Meta:
+        verbose_name = "Оплата"
+        verbose_name_plural = "Оплаты"
+
+    def __str__(self):
+        return f"Оплата №{self.pk} — {self.pay_sum}"
 
 
 class Subscription(models.Model):

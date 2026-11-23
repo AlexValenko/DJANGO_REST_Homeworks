@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from materials.models import Course
 from materials.serializer import CourseSerializer, LessonSerializer
 
 from .models import Payment, User
@@ -50,6 +51,13 @@ class PaymentSerializer(serializers.ModelSerializer):
         model = Payment
         fields = ("id", "user", "pay_date", "course", "lesson", "pay_sum", "pay_method")
 
+class PaymentCreateSerializer(serializers.ModelSerializer):
+    course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
+
+    class Meta:
+        model = Payment
+        fields = ("id", "course", "pay_sum", "pay_link")
+        read_only_fields = ("id", "pay_sum", "pay_link")
 
 class UserProfileSerializer(UserSerializer):
     payments = PaymentSerializer(many=True, read_only=True)
