@@ -6,6 +6,14 @@ from users.models import Subscription
 
 
 class CourseSerializer(serializers.ModelSerializer):
+    """Сериализатор для отображения курсов"""
+
+    is_subscribed = serializers.SerializerMethodField()
+
+    def get_is_subscribed(self, course):
+        user = self.context["request"].user
+        return Subscription.objects.filter(user=user, course=course).exists()
+
     class Meta:
         model = Course
         fields = (
@@ -14,14 +22,19 @@ class CourseSerializer(serializers.ModelSerializer):
             "preview",
             "description",
             "owner",
+            "is_subscribed",
+            "price",
         )
-        read_only_fields = ("owner",)
+        read_only_fields = (
+            "owner",
+            "is_subscribed",
+        )
 
 
 class LessonSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения уроков"""
 
-    link = serializers.CharField(validators=[you_tube_only])
+    link = serializers.CharField(validators=[you_tube_only], required=False)
 
     class Meta:
         model = Lesson
@@ -61,4 +74,4 @@ class CourseWithLessonsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ("id", "name", "preview", "description", "is_subscribed", "lessons_count", "lessons")
+        fields = ("id", "name", "preview", "description", "price", "is_subscribed", "lessons_count", "lessons")

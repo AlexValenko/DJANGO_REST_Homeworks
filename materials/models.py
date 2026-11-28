@@ -14,6 +14,14 @@ class Course(models.Model):
         help_text="Загрузите изображение (необязательно)",
     )
     description = models.TextField(null=True, blank=True, verbose_name="Описание курса", help_text="Описание курса")
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Цена курса в USD",
+        help_text="Укажите цену курса в USD",
+        blank=True,
+        null=True,
+    )
     owner = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
